@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en" translate="no" data-version="5fd3ce70a0cae6ac61b1c51119f743deaa695698">
+  <head>
+    <!-- Primary Meta Tags -->
+    <title>Deel - Your forever people platform</title>
+    <meta name="title" content="Deel - Your forever people platform" />
+    <meta
+      name="description"
+      content="Deel is the first payroll platform for remote teams that connects localized compliance and payments in one system of record and automates everything."
+    />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.deel.com/" />
+    <meta property="og:title" content="Deel - Your forever people platform" />
+    <meta
+      property="og:description"
+      content="Deel is the first payroll platform for remote teams that connects localized compliance and payments in one system of record and automates everything."
+    />
+    <meta property="og:image" content="https://media.letsdeel.com/images/ogimage_hr.png" />
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://www.deel.com/" />
+    <meta property="twitter:title" content="Deel - Your forever people platform" />
+    <meta
+      property="twitter:description"
+      content="Deel is the first payroll platform for remote teams that connects localized compliance and payments in one system of record and automates everything."
+    />
+    <meta property="twitter:image" content="https://media.letsdeel.com/images/ogimage_hr.png" />
+    <meta name="twitter:site" content="@deel" />
+
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="viewport-fit=cover, width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+    <meta name="theme-color" content="#000000" />
+    <link rel="manifest" href="https://app.deel.com/manifest.json" />
+    <link rel="shortcut icon" href="https://app.deel.com/favicon.ico?v=2" />
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-icon" href="https://app.deel.com/apple-touch-icon.png" />
+    <meta name="apple-itunes-app" content="app-id=6478083155" />
+    <!-- Cal com -->
+    <script>
+      (function (C, A, L) {
+        let p = function (a, ar) {
+          a.q.push(ar);
+        };
+        let d = C.document;
+        C.Cal =
+          C.Cal ||
+          function () {
+            let cal = C.Cal;
+            let ar = arguments;
+            if (!cal.loaded) {
+              cal.ns = {};
+              cal.q = cal.q || [];
+              d.head.appendChild(d.createElement('script')).src = A;
+              cal.loaded = true;
+            }
+            if (ar[0] === L) {
+              const api = function () {
+                p(api, arguments);
+              };
+              const namespace = ar[1];
+              api.q = api.q || [];
+              typeof namespace === 'string' ? (cal.ns[namespace] = api) && p(api, ar) : p(cal, ar);
+              return;
+            }
+            p(cal, ar);
+          };
+      })(window, 'https://cal.com/embed.js', 'init');
+      Cal('init');
+    </script>
+    <!-- End cal com -->
+    <style>
+      .deel-loading-fade-out {
+        animation: fadeOut 0.4s forwards;
+      }
+
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
+
+      .light-bg {
+        background-color: #f7f5f2;
+        color: rgba(0, 0, 0, 0.87);
+      }
+
+      .dark-bg {
+        background-color: #1b1b1b;
+        color: #fff;
+      }
+
+      .simple-loading {
+        display: none;
+      }
+
+      .simple-loading svg {
+        display: none;
+      }
+
+      .simple-loading:after {
+        content: '';
+        position: relative;
+        animation: spin 1s linear infinite;
+        width: 40px;
+        height: 40px;
+        border: 4px solid transparent;
+        border-top: 4px solid currentColor;
+        border-radius: 50%;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes slideInL1 {
+        0% {
+          transform: translateY(100%);
+          opacity: 0;
+        }
+        25%,
+        70% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        70.5%,
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideInL2 {
+        0%,
+        7.5% {
+          transform: translateY(100%);
+          opacity: 0;
+        }
+        32.5%,
+        77.5% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        77.5%,
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideInL3 {
+        0%,
+        15% {
+          transform: translateY(100%);
+          opacity: 0;
+        }
+        40%,
+        85% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        85%,
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      @keyframes slideInL4 {
+        0%,
+        22.5% {
+          transform: translateY(100%);
+          opacity: 0;
+        }
+        47.5%,
+        92.5% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        92.5%,
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes dotAppear {
+        0%,
+        35% {
+          opacity: 0;
+          transform-origin: 65.7px 20.4px;
+        }
+        35.5% {
+          opacity: 1;
+          transform: translateY(-3px) rotate(-13deg);
+        }
+        39.5% {
+          opacity: 1;
+          transform: translateY(-3px) rotate(-13deg);
+        }
+        50% {
+          transform-origin: 70.81px 21.36px;
+          opacity: 1;
+          transform: translateY(-0.3px) rotate(4deg);
+        }
+        60% {
+          opacity: 1;
+          transform: translateY(0) rotate(0);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+    <script src="platform.js%3Fonload=init" async defer></script>
+    <script>
+      function init() {
+        gapi.load('auth2', function () {
+          /* Ready. Make a call to gapi.auth2.init or some other API */
+        });
+      }
+    </script>
+  </head>
+  <body>
+</html>
