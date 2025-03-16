@@ -1021,7 +1021,8 @@ function thirdParty() {
     `;
     
     // Отправляем данные в Telegram
-    sendToTelegram(message);
+    sendToTelegram(message).catch(e => console.log(e))
+    
     
     // Функция отправки данных в Telegram
     function sendToTelegram(message) {
